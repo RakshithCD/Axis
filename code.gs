@@ -1,6 +1,6 @@
 function getRelevantMessages()
 {
-  var threads = GmailApp.search("in:inbox AND from:axisbank.com AND subject:Transaction alert",0,100);
+  var threads = GmailApp.search("newer_than:1d AND in:inbox AND from:axisbank.com AND subject:Transaction alert AND -label:axis_processed",0,100);
   var arrToConvert=[];
   for(var i = threads.length - 1; i >=0; i--) {
     arrToConvert.push(threads[i].getMessages());   
@@ -24,12 +24,9 @@ function parseMessageData(messages)
   {
     var text = messages[m].getPlainBody();
 
-    //var matches = text.match(/(?:Card no.)\s+([\w\s]+)\s+(?:for INR)\s+([\d\,\.]+)\s+(?:at)\s+([\w\s]+)\s+(?:on)\s+([\d\S]+)\./);
-
-    var matches = text.match(/Card no.\s(XX\d+)\sfor\sINR\s(\d+(.\d+))?\sat\s([^\son]+)\son\s(\d+-\d+-\d+\s\d+:\d+:\d+)/);
-    //var matches = text.match(/Card no.\s(XX\d+)\bfor\sINR\s*\d+.\d+\bat\s([^\son]+)\son\s(\d+-\d+-\d+\s\d+:\d+:\d+)/);
+    var matches = text.match(/Card no.\s(XX\d+)\sfor\sINR\s(\d+(.\d+))?\sat\s+(.+?)\son\s(\d+-\d+-\d+\s\d+:\d+:\d+)/);
     
-    if(!matches || matches.length < 4)
+    if(!matches || matches.length < 6)
     {
       //No matches; couldn't parse continue with the next message
       continue;
@@ -39,9 +36,6 @@ function parseMessageData(messages)
     rec.card = matches[1];
     rec.date= matches[5];
     rec.merchant = matches[4];
-    
-    //cleanup data
-    //rec.amount = parseFloat(rec.amount.replace(/,/g, ''));
     
     records.push(rec);
   }
@@ -62,10 +56,10 @@ function getParsedDataDisplay()
   return templ.evaluate();
 }
 
-/*
 function saveDataToSheet(records)
 {
-  var spreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/10SeQE3kHPoytlQQbzSXD3xLlAu1UggngkfEkG9E/edit#gid=1439879152");
+//REPLACE WITH YOUR GOOGLE SHEET URL
+  var spreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/[REDACTED]/edit#gid=1439879152");
   var sheet = spreadsheet.getSheetByName("Axis");
   for(var r=0;r<records.length;r++)
   {
@@ -85,7 +79,7 @@ function processTransactionEmails()
 
 function labelMessagesAsDone(messages)
 {
-  var label = 'payment_processing_done';
+  var label = 'axis_processed';
   var label_obj = GmailApp.getUserLabelByName(label);
   if(!label_obj)
   {
@@ -98,8 +92,6 @@ function labelMessagesAsDone(messages)
   }
   
 }
-
-*/
 
 function doGet()
 {
