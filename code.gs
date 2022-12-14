@@ -59,7 +59,7 @@ function getParsedDataDisplay()
 function saveDataToSheet(records)
 {
 //REPLACE WITH YOUR GOOGLE SHEET URL
-  var spreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/[REDACTED]/edit#gid=1439879152");
+  var spreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/zTDJo5a6QK/edit#gid=1439879152 - REPLACE BETWEEN QUOTES");
   var sheet = spreadsheet.getSheetByName("Axis");
   for(var r=0;r<records.length;r++)
   {
