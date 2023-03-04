@@ -24,7 +24,7 @@ function parseMessageData(messages)
   {
     var text = messages[m].getPlainBody();
 
-    var matches = text.match(/Card no.\s(XX\d+)\sfor\sINR\s(\d+(.\d+))?\sat\s+(.+?)\son\s*(\d+-\d+-\d+\s\d+:\d+:\d+)/);
+    var matches = text.match(/Card no.\s(XX\d+)\sfor\s([A-Z]{3})\s(\d+(?:\.\d+)?)\sat\s(.+?)\son\s*(\d+-\d+-\d+\s\d+:\d+:\d+)/);
     
     if(!matches || matches.length < 6)
     {
@@ -32,10 +32,11 @@ function parseMessageData(messages)
       continue;
     }
     var rec = {};
-    rec.amount = matches[2];
+    rec.currency = matches[2];
     rec.card = matches[1];
     rec.date= matches[5];
     rec.merchant = matches[4];
+    rec.amount = matches[3];
     
     records.push(rec);
   }
@@ -63,7 +64,7 @@ function saveDataToSheet(records)
   var sheet = spreadsheet.getSheetByName("Axis");
   for(var r=0;r<records.length;r++)
   {
-    sheet.appendRow([records[r].date,records[r].card, records[r].merchant, records[r].amount ] );
+    sheet.appendRow([records[r].date,records[r].card, records[r].merchant, records[r].amount, records[r].currency] );
   }
   
 }
